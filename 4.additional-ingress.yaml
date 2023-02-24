@@ -1,0 +1,35 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: nginx-prefix
+  namespace: test
+spec:
+  stripPrefix:
+    prefixes:
+    - /test
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  namespace: test
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: api-gateway-system-oauth2-proxy-forwardauth@kubernetescrd,test-nginx-prefix@kubernetescrd
+spec:
+  ingressClassName: tmax-cloud
+  rules:
+    - host: nginx.tmaxcloud.org
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: nginx-service
+              port:
+                number: 443
+  tls:
+  - hosts:
+    - nginx.tmaxcloud.org

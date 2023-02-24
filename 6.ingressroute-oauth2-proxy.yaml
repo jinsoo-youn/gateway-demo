@@ -1,0 +1,21 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nginx-ingressroute
+  namespace: test
+spec:
+    entryPoints:
+    - websecure
+    routes:
+    - match: Host(`nginx-ingressroute.tmaxcloud.org`) && PathPrefix(`/`)
+      kind: Rule
+      middlewares:
+      # - name: test-test-prefix@kubernetescrd
+      - name: oauth2-proxy-forwardauth
+        namespace: api-gateway-system
+      services:
+      - name: nginx-service
+        port: 443
+        scheme: https
+        serversTransport: api-gateway-system-tmaxcloud@kubernetescrd
+    tls: {}

@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls
+  namespace: test
+spec:
+    secretName: tls
+    issuerRef:
+        name: tmaxcloud-issuer
+        kind: ClusterIssuer
+        group: cert-manager.io
+    commonName: tmax-cloud
+    dnsNames:
+      - tmax-cloud
+      - nginx.test.svc.cluster.local
+      - nginx.test.svc
+    isCA: false
+    usages:
+      - digital signature
+      - key encipherment
+      - server auth
+
